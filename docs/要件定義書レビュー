@@ -1,0 +1,114 @@
+修正点の指摘
+
+1.例外処理が不足している
+    現状、入力エラーやタスク削除時に不正な番号が入力された場合の例外処理が不十分です。
+    特にScanner.nextInt()で数値以外を入力された場合にプログラムがクラッシュします。
+    解決策：例外処理（try-catch）を追加し、不正な入力に対応する。
+
+-- 改善例
+try {
+    int choice = scanner.nextInt();
+} catch (InputMismatchException e) {
+    System.out.println("Invalid input. Please enter a number.");
+    scanner.nextLine(); // 入力バッファをクリア
+}
+
+2.コードの再利用性を向上
+    viewTasks() メソッドが一覧表示専用ですが、削除処理の判定にも利用されています。
+    タスクが空かどうかを判定する汎用的なメソッドを作成すると、他の場面でも使いやすくなります。
+
+--改善例
+private static boolean isTaskListEmpty() {
+    if (tasks.isEmpty()) {
+        System.out.println("No tasks available.");
+        return true;
+    }
+    return false;
+}
+
+3.tasksリストの直接操作
+    tasksは現在、直接リスト操作を行っています。より安全に操作するため、addTask() や removeTask() などのメソッドで管理するべきです。
+    これにより、リストの操作をカプセル化できます。
+
+4.ユーザーインターフェースの改善
+    メニュー表示やメッセージが基本的すぎて、ユーザビリティがやや低いです。
+    メニューに番号を再確認させる文言を追加すると、初心者にも親切です。
+
+5.終了時にScannerを閉じていない
+    scanner.close()を追加してリソースを適切に解放する必要があります。
+
+100点満点中の評価
+得点：80点
+
+良い点：
+シンプルな構造で初心者にも分かりやすい。
+基本的なTODOアプリの要件を満たしている。
+メソッド分割が適切で、読みやすい。
+改善の余地：
+例外処理や再利用性の改善、ユーザビリティ向上の余地がある。
+データの永続化がないため、プログラム終了後のデータ保持ができない。
+より良い改善点
+リスト操作のカプセル化
+
+addTask(), deleteTask(), viewTasks() のように、リスト操作を明確に分離することで、拡張性と保守性が向上します。
+改善例：
+
+java
+コードをコピーする
+public static void addTask(String task) {
+    tasks.add(task);
+    System.out.println("Task added successfully!");
+}
+
+public static void deleteTask(int index) {
+    tasks.remove(index);
+    System.out.println("Task deleted successfully!");
+}
+永続化機能の追加
+
+現在、データがメモリ上にのみ存在するため、アプリケーションを終了するとデータが消えてしまいます。
+ファイルを使ってデータを保存し、再起動時に読み込む機能を追加するとより実用的になります。
+改善例：
+
+タスク保存用ファイル：
+
+java
+コードをコピーする
+private static final String TASKS_FILE = "tasks.txt";
+保存と読み込みメソッド：
+
+java
+コードをコピーする
+public static void saveTasksToFile() throws IOException {
+    Files.write(Paths.get(TASKS_FILE), tasks, StandardCharsets.UTF_8);
+}
+
+public static void loadTasksFromFile() throws IOException {
+    if (Files.exists(Paths.get(TASKS_FILE))) {
+        tasks = new ArrayList<>(Files.readAllLines(Paths.get(TASKS_FILE), StandardCharsets.UTF_8));
+    }
+}
+入力のバリデーション強化
+
+数字以外の入力や範囲外の値を入力された際に適切なエラーメッセージを表示し、再入力を促す仕組みを追加します。
+改善例：
+
+java
+コードをコピーする
+public static int getValidatedInput(Scanner scanner) {
+    while (true) {
+        try {
+            return scanner.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.nextLine(); // 入力バッファをクリア
+        }
+    }
+}
+メニュー操作の効率化
+
+現在は数値を入力して選択していますが、たとえばキーワード（"add", "view", "delete", "exit"）でも操作可能にすると、よりユーザーに親切な設計になります。
+将来のGUI対応の下準備
+
+クラス設計を改良して、タスク操作ロジックをGUIでも使えるよう抽象化します。
+例えば、TaskManagerクラスを作り、タスク管理のロジックを分離します。
