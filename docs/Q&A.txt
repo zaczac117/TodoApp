@@ -112,6 +112,27 @@ Q.git remote -v
 A.
 origin  https://github.com/zaczac117/todoApp.git (fetch)
 origin  https://github.com/zaczac117/todoApp.git (push)
+
+2024/12/24
 ------------------------------------------------------------------------------------------------------------------------
-https://qiita.com/mumucochimu/items/da6b392568b0d8d21d7d
-Q.【github】remote: Invalid username or password.の解決方法
+Q.お前らのSSH Keysの作り方は間違っているの追記
+①ls -al ~/.ssh
+②ssh-keygen -t ed25519 -C "your_email@example.com"
+③cat < ~/.ssh/ed25519.pub | clip
+④ssh -T git@github.com
+
+既存のsshキー削除
+⑤ rm ~/.ssh/ed25519
+------------------------------------------------------------------------------------------------------------------------
+Q.gitのブランチの種類について
+master(main)ブランチ：新規作成時のデフォルトブランチ,マージのみ行う
+developブランチ：開発の中心ブランチ
+
+https://qiita.com/3062_in_zamud/items/8eb8f59c13dbba7863ad
+------------------------------------------------------------------------------------------------------------------------
+Q.Git-flowとは
+https://dev.classmethod.jp/articles/introduce-git-flow/
+
+Q.Git-flow導入
+https://qiita.com/azusanakano/items/c5f021497d8f69c00e51
+------------------------------------------------------------------------------------------------------------------------
